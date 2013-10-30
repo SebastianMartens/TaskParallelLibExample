@@ -90,7 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="UI\MainWindowViewModel.cs" />
-    <Compile Include="Model\EnumerableModelClassOrService.cs" />
+    <Compile Include="Model\SomeStatelessService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

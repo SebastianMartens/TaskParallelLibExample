@@ -36,7 +36,7 @@ namespace WpfApplication1.UI
 
 
         private readonly ObservableCollection<string> _collection;                 
-        private readonly EnumerableModelClassOrService _enumerableModelClassOrService;
+        //private readonly SomeStatelessService _someStatelessService;
         private bool _isBusy;
 
 
@@ -52,7 +52,7 @@ namespace WpfApplication1.UI
             _collection = new ObservableCollection<string>();
             DataCollectionView = new CollectionViewSource { Source = _collection };
             IsBusy = false;
-            _enumerableModelClassOrService = new EnumerableModelClassOrService(); // would normally be injected into constructor...
+         //   _someStatelessService = new SomeStatelessService(); // would normally be injected into constructor...
             
         }            
 
@@ -64,15 +64,26 @@ namespace WpfApplication1.UI
             Logger.Log("Command im ViewModel empfangen. Laden wird jetzt gestartet...");
             IsBusy = true;                
 
-            var getDataTask = _enumerableModelClassOrService.LongRunningGetDataMethodAsync(); // task is spawn and started automatically...                         
+            var getDataTask = SomeStatelessService.LongRunningGetDataMethodAsync(); // task is spawn and started automatically...                         
             Logger.Log("Laden wurde gestartet. Main Thread läuft weiter und wartet auf Ergebnisse...");
+
+            // it's Ok to have multiple tasks running at the same time:
+            var getDataTask2 = SomeStatelessService.LongRunningGetDataMethodAsync(); 
+            Logger.Log("Laden wurde ein zweites Mal gestartet. Main Thread läuft weiter und wartet auf Ergebnisse...");
 
 
             //------------------
             var list = await getDataTask;
-            Logger.Log("Ergebnisse sind erfolgreich berechnet. Hier bin ich wieder im Main-Thread!");
-            IsBusy = false;            
-            DataCollectionView.Source = list;               
+            Logger.Log("Ergebnisse von Task 1 sind erfolgreich berechnet. Hier bin ich wieder im Main-Thread!");
+            DataCollectionView.Source = list;   
+            
+
+            //------------------
+            list.AddRange(await getDataTask2);
+            //var list2 = await getDataTask2;
+            Logger.Log("Ergebnisse von Task 2 sind erfolgreich berechnet. Hier bin ich wieder im Main-Thread!");
+            IsBusy = false;
+            DataCollectionView.View.Refresh();
         }
       
     }

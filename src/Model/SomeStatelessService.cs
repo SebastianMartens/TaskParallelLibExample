@@ -7,16 +7,16 @@ using WpfApplication1.Infrastructure;
 namespace WpfApplication1.Model
 {
     /// <summary>
-    /// placeholder for any entry point to the model (e.g. aggregate root) or service.
+    /// This service delivers data. Nevertheless it's stateless (data is not stored inside of this class).
     /// </summary>    
-    public class EnumerableModelClassOrService
+    public static class SomeStatelessService
     {
         private const int MaxItems = 3;
 
         /// <summary>
         /// possibly very long list of data that comes slowly from anywhere in the cloud...
         /// </summary>
-        public async Task<List<string>> LongRunningGetDataMethodAsync()
+        public static async Task<List<string>> LongRunningGetDataMethodAsync()
         {
             // async methoden können direkt "awaitet" werden:
             // return await GetDataAsync();
