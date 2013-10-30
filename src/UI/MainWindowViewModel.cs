@@ -70,7 +70,7 @@ namespace WpfApplication1.UI
 
             //------------------
             var list = await getDataTask;
-            Logger.Log("Ergebnisse sind erfolgreich berechnet. Hier bin ich wieder im Main-thread!");
+            Logger.Log("Ergebnisse sind erfolgreich berechnet. Hier bin ich wieder im Main-Thread!");
             IsBusy = false;            
             DataCollectionView.Source = list;               
         }
