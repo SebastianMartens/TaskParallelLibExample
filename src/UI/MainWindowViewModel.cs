@@ -1,8 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.Composition;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Data;
 using System.Windows.Input;
 using Microsoft.Practices.Prism.Commands;
@@ -13,13 +9,13 @@ using WpfApplication1.Model;
 namespace WpfApplication1.UI
 {
     /// <summary>
-    /// Using https://www.nuget.org/packages/Microsoft.Bcl.Async for async/await support in .Net 4.5!!!
+    /// Using https://www.nuget.org/packages/Microsoft.Bcl.Async for async/await support in .Net 4.0!!!
     /// > Install-Package Microsoft.Bcl.Async
     /// </summary>
     public class MainWindowViewModel: NotificationObject
     {
         // public "interface" to the view:
-        public ICommand LoadDataCommand { get; set; }                
+        public ICommand LoadDataIntoViewModelCommand { get; set; }                
         public CollectionViewSource DataCollectionView { get; private set; }
 
         // can be used to show/ hide busy indicator...
@@ -35,8 +31,7 @@ namespace WpfApplication1.UI
         }
 
 
-        private readonly ObservableCollection<string> _collection;                 
-        //private readonly SomeStatelessService _someStatelessService;
+        private readonly ObservableCollection<string> _collection;                         
         private bool _isBusy;
 
 
@@ -46,20 +41,21 @@ namespace WpfApplication1.UI
         public MainWindowViewModel()
         {
             // wire up commands:
-            LoadDataCommand = new DelegateCommand(LoadData);
+            LoadDataIntoViewModelCommand = new DelegateCommand(LoadDataIntoViewModel);
 
             // init members:            
             _collection = new ObservableCollection<string>();
             DataCollectionView = new CollectionViewSource { Source = _collection };
-            IsBusy = false;
-         //   _someStatelessService = new SomeStatelessService(); // would normally be injected into constructor...
-            
+            IsBusy = false;                     
         }            
 
         /// <summary>
-        /// Variante, bei der das ViewModel das Laden der Daten an einen async. Hintergrundprozess delegiert.
+        /// In this snippet we use two seperate tasks to load data async. in the background.
+        /// Data is NOT "stored" in any centralized domain model, instead it's only retrieved to be shown in the UI.
+        ///
+        /// => data synchronization with the main thread is done in the view model instance!
         /// </summary>
-        private async void LoadData()
+        private async void LoadDataIntoViewModel()
         {            
             Logger.Log("Command im ViewModel empfangen. Laden wird jetzt gestartet...");
             IsBusy = true;                
@@ -75,7 +71,7 @@ namespace WpfApplication1.UI
             //------------------
             var list = await getDataTask;
             Logger.Log("Ergebnisse von Task 1 sind erfolgreich berechnet. Hier bin ich wieder im Main-Thread!");
-            DataCollectionView.Source = list;   
+            DataCollectionView.Source = list;   // remark: we do NOT change the collection in the background task. Instead we "pull" the data out of the task and use it in the UI-thread!
             
 
             //------------------

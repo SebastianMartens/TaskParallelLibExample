@@ -17,7 +17,7 @@
             
         
         <StackPanel Orientation="Horizontal">
-            <Button Content="Laden" Width="75" Command="{Binding LoadDataCommand}"/>
+            <Button Content="Laden" Width="75" Command="{Binding LoadDataIntoViewModelCommand}"/>
             <Button Content="Ende" Width="75" Click="C_Ende_Click"/>
             <CheckBox Content="IsBusy" IsChecked="{Binding IsBusy}" />
         </StackPanel>
