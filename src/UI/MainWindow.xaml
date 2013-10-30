@@ -1,0 +1,28 @@
+﻿<Window x:Class="WpfApplication1.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"         
+        xmlns:ui="clr-namespace:WpfApplication1.UI" xmlns:sys="clr-namespace:System;assembly=mscorlib"
+
+        d:DataContext="{d:DesignInstance Type=ui:MainWindowViewModel}"
+
+        Title="MainWindow" Height="350" Width="525">
+
+    <StackPanel Orientation="Vertical">
+
+        <ListBox x:Name="GridForData" HorizontalAlignment="Left" VerticalAlignment="Top" Height="265" Width="517" ItemsSource="{Binding DataCollectionView.View}"/>
+            
+        
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Laden" Width="75" Command="{Binding LoadDataCommand}"/>
+            <Button Content="Ende" Width="75" Click="C_Ende_Click"/>
+            <CheckBox Content="IsBusy" IsChecked="{Binding IsBusy}" />
+        </StackPanel>
+    </StackPanel>
+
+
+
+</Window>
