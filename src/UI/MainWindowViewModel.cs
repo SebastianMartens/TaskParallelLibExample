@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Microsoft.Practices.Prism.Commands;
 using Microsoft.Practices.Prism.ViewModel;
 using WpfApplication1.Infrastructure;
@@ -80,6 +81,9 @@ namespace WpfApplication1.UI
             Logger.Log("Ergebnisse von Task 2 sind erfolgreich berechnet. Hier bin ich wieder im Main-Thread!");
             IsBusy = false;
             DataCollectionView.View.Refresh();
+
+            // The ViewModel never accesses any UI control or part of the view. So calls to the dispatcher should not be needed here...
+            //Dispatcher.Invoke(() => ...);
         }
       
     }

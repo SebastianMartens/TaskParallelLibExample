@@ -8,6 +8,8 @@ namespace WpfApplication1.Model
 {
     /// <summary>
     /// This service delivers data. Nevertheless it's stateless (data is not stored inside of this class).
+    /// 
+    /// This example service is "static". But be aware that this is dangerous in bigger classes as all static fields are shared among threads and therefore are targets of concurrency issues!
     /// </summary>    
     public static class SomeStatelessService
     {
