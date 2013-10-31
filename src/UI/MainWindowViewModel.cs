@@ -82,7 +82,9 @@ namespace WpfApplication1.UI
             IsBusy = false;
             DataCollectionView.View.Refresh();
 
-            // The ViewModel never accesses any UI control or part of the view. So calls to the dispatcher should not be needed here...
+            // The View and ViewModel run in the UI thread. But no one ever accesses the viewmodel or view from elsewhere so calls to the dispatcher should not be needed here...
+            // If you use shared objects (e.g. ObservableCollections that comes from the model) then we would have to marshall?? 
+            // => make example of ObservableConcurrentColletion usage!
             //Dispatcher.Invoke(() => ...);
         }
       
