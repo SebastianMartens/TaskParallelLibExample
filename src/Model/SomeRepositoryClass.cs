@@ -26,9 +26,30 @@ namespace WpfApplication1.Model
         {
             var myDataCollection = await SomeStatelessService.LongRunningGetDataMethodAsync();
             
-            // write-access to resources must be locked to be thread-safe! - Even simple assignments like "_a = 2"
-            // Try not to call any other objects's method inside of the lock in order to prevent deadlocks.
+            // write-access to resources must be locked to be thread-safe! - Even simple assignments like "_a = 2".
+            // Do only lock your classes' own resources.
+            // Try not to call any other objects's method inside of the lock in order to prevent deadlocks (except side effect free ones).
             
+            /* 
+             Sometimes a shared resource is only written in one thread but read in multiple threads.
+             An example could be a data cache that is filled by one "data load task" and that is used by multiple threads.
+             Or image a queue of workItems that are processed by multiple workers.
+             
+             see http://www.nullskull.com/a/1464/producerconsumer-queue-and-blockingcollection-in-c-40.aspx):
+             System.Collections.Concurrent.IProducerConsumerCollection<T>
+                System.Collections.Concurrent.ConcurrentBag<T>
+                System.Collections.Concurrent.ConcurrentQueue<T>
+                System.Collections.Concurrent.ConcurrentStack<T>
+            
+                System.Collections.Concurrent.BlockingCollection<T>
+                    System.Collections.Concurrent.ConcurrentDictionary<T>
+            */
+
+            // => see "producer-consumer" pattern and reader/writer locks.
+
+            // Don't use:
+            // Monitor, Mutex, Semaphore, Pulse-Method, manualResetEvent, ThreadPool. cancellatioins etc. pp
+
             // Remark: When reading from the collection, you'll have to catch an exception that occurs if the list is changed during enumeration!                        
             lock (_loadedObjectsOfThisWorkItemContext)
             {

@@ -1,7 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Threading;
 using Microsoft.Practices.Prism.Commands;
 using Microsoft.Practices.Prism.ViewModel;
 using WpfApplication1.Infrastructure;
@@ -21,6 +21,7 @@ namespace WpfApplication1.UI
 
         // can be used to show/ hide busy indicator...
         // value types can be changed from any thread and will be updated correctly in the UI with databinding!
+        private bool _isBusy;
         public bool IsBusy
         {
             get { return _isBusy; }
@@ -32,10 +33,6 @@ namespace WpfApplication1.UI
         }
 
 
-        private readonly ObservableCollection<string> _collection;                         
-        private bool _isBusy;
-
-
         /// <summary>
         /// 
         /// </summary>
@@ -44,9 +41,8 @@ namespace WpfApplication1.UI
             // wire up commands:
             LoadDataIntoViewModelCommand = new DelegateCommand(LoadDataIntoViewModel);
 
-            // init members:            
-            _collection = new ObservableCollection<string>();
-            DataCollectionView = new CollectionViewSource { Source = _collection };
+            // init members:                        
+            DataCollectionView = new CollectionViewSource();
             IsBusy = false;                     
         }            
 
@@ -68,17 +64,18 @@ namespace WpfApplication1.UI
             var getDataTask2 = SomeStatelessService.LongRunningGetDataMethodAsync(); 
             Logger.Log("Laden wurde ein zweites Mal gestartet. Main Thread läuft weiter und wartet auf Ergebnisse...");
 
-
-            //------------------
-            var list = await getDataTask;
-            Logger.Log("Ergebnisse von Task 1 sind erfolgreich berechnet. Hier bin ich wieder im Main-Thread!");
+            var list = new List<string>();
             DataCollectionView.Source = list;   // remark: we do NOT change the collection in the background task. Instead we "pull" the data out of the task and use it in the UI-thread!
-            
 
             //------------------
-            list.AddRange(await getDataTask2);
-            //var list2 = await getDataTask2;
+            list.AddRange(await getDataTask);
+            Logger.Log("Ergebnisse von Task 1 sind erfolgreich berechnet. Hier bin ich wieder im Main-Thread!");
+                        
+
+            //------------------
+            list.AddRange(await getDataTask2);            
             Logger.Log("Ergebnisse von Task 2 sind erfolgreich berechnet. Hier bin ich wieder im Main-Thread!");
+
             IsBusy = false;
             DataCollectionView.View.Refresh();
 
